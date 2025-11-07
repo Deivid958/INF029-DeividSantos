@@ -10,10 +10,10 @@
 //  O aluno deve preencher seus dados abaixo, e implementar as questões do trabalho
 
 //  ----- Dados do Aluno -----
-//  Nome:
-//  email:
-//  Matrícula:
-//  Semestre:
+//  Nome: Deivid Santos de Souza
+//  email: 
+//  Matrícula: 20251160028
+//  Semestre: 2
 
 //  Copyright © 2016 Renato Novais. All rights reserved.
 // Última atualização: 07/05/2021 - 19/08/2016 - 17/10/2025
@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include "trabalho1.h" 
 #include <stdlib.h>
+#include <string.h>
 
 DataQuebrada quebraData(char data[]);
 
@@ -92,12 +93,49 @@ int teste(int a)
 int q1(char data[])
 {
   int datavalida = 1;
-
+  int bissexto = 0;
   //quebrar a string data em strings sDia, sMes, sAno
-
-
+  DataQuebrada da = quebraData(data);
+  if(da.valido == 1){    
+    if(da.iAno >= 10 && da.iAno < 100){
+      da.iAno = da.iAno + 2000;
+    }
+    if((da.iAno % 400 == 0)||(da.iAno % 4 == 0 && da.iAno % 100 != 0)){
+      bissexto = 1;
+    } 
+    switch (da.iMes){
+      case 1:case 3:case 5:case 7:case 8:case 10:case 12:{          
+        if(da.iDia < 1 || da.iDia > 31)
+          datavalida = 0;
+        break;
+      }
+      case 2:{
+        if(bissexto == 1){
+          if(da.iDia < 1 || da.iDia > 29)
+            datavalida = 0;
+        }
+        else{
+          if(da.iDia < 1 || da.iDia > 28)
+            datavalida = 0;
+        }
+        break;
+      }
+      case 4:case 6:case 9:case 11:{
+        if(da.iDia < 1 || da.iDia > 30)
+          datavalida = 0;
+        break;
+      } 
+      default:{
+        datavalida = 0;
+        break;
+      }
+    }
+  }
+  else{ 
+    datavalida = 0;
+  } 
   //printf("%s\n", data);
-
+ 
   if (datavalida)
       return 1;
   else
@@ -122,28 +160,7 @@ int q1(char data[])
  */
 DiasMesesAnos q2(char datainicial[], char datafinal[])
 {
-
-    //calcule os dados e armazene nas três variáveis a seguir
-    DiasMesesAnos dma;
-
-    if (q1(datainicial) == 0){
-      dma.retorno = 2;
-      return dma;
-    }else if (q1(datafinal) == 0){
-      dma.retorno = 3;
-      return dma;
-    }else{
-      //verifique se a data final não é menor que a data inicial
-      
-      //calcule a distancia entre as datas
-
-
-      //se tudo der certo
-      dma.retorno = 1;
-      return dma;
-      
-    }
-    
+    //calcule os dados e armazene nas três variáveis a seguir   
 }
 
 /*
@@ -158,8 +175,29 @@ DiasMesesAnos q2(char datainicial[], char datafinal[])
  */
 int q3(char *texto, char c, int isCaseSensitive)
 {
-    int qtdOcorrencias = -1;
-
+    int qtdOcorrencias = 0,i,j;
+    if(isCaseSensitive == 1){
+      for(i = 0;texto[i] != '\0';i++){
+        if(texto[i] == c){
+          qtdOcorrencias++;
+        }
+      }
+    }
+    else{
+      for(i = 0;texto[i] != '\0';i++){
+        if(texto[i] == c){
+          qtdOcorrencias++;
+        }
+        else{
+          for(j = 0;j < 27;j++){
+            if((texto[i] == 'a'+j && c == 'A'+j) || (texto[i] == 'A'+j && c == 'a'+j)){
+              qtdOcorrencias++;
+              break;
+            }
+          }
+        }
+      }
+    }
     return qtdOcorrencias;
 }
 
@@ -180,8 +218,39 @@ int q3(char *texto, char c, int isCaseSensitive)
  */
 int q4(char *strTexto, char *strBusca, int posicoes[30])
 {
-    int qtdOcorrencias = -1;
-
+    int qtdOcorrencias = 0;
+    int i,j,ipos;
+    int valido = 1,aux;
+    j = ipos = aux =0;
+    for(i = 0;strTexto[i] != '\0';i++){
+      if(strTexto[i] < 0 || strTexto[i] > 128){
+        aux++;
+        i++;
+        continue;
+      }
+      else if(strTexto[i] == strBusca[j]){
+        posicoes[ipos] = i+1-aux;
+        for(j = 1;strBusca[j] != '\0';j++){
+          if(strTexto[i] < 0 || strTexto[i] > 128){
+            aux++;
+            i++;
+            valido = 0;
+            break;
+          }
+          else if(strTexto[i+j] != strBusca[j]){
+            valido = 0;
+            break;
+          }
+        }
+        if(valido){
+          posicoes[++ipos] = i+j-aux;
+          ipos++;
+          qtdOcorrencias++;
+        }
+        valido = 1;
+        j = 0;
+      }
+    }
     return qtdOcorrencias;
 }
 
@@ -197,8 +266,12 @@ int q4(char *strTexto, char *strBusca, int posicoes[30])
 
 int q5(int num)
 {
-
-    return num;
+  int aux = 0;
+  for(num;num != 0;num /= 10){
+    aux = aux*10 + (num%10);
+  }
+  num = aux;
+  return num;
 }
 
 /*
@@ -213,7 +286,21 @@ int q5(int num)
 
 int q6(int numerobase, int numerobusca)
 {
-    int qtdOcorrencias;
+    int qtdOcorrencias = 0,qtdbusca = 0,aux;
+    for(aux = numerobusca;aux != 0;aux/=10){
+      if(qtdbusca == 1)
+        qtdbusca *= 10;
+      else
+        qtdbusca++;
+    }
+    if(qtdbusca != 0){
+      for(numerobase;numerobase != 0;numerobase /= 10){
+        aux = numerobase % (10*qtdbusca);
+        if(aux == numerobusca){
+          qtdOcorrencias++;
+        }
+      }
+    }
     return qtdOcorrencias;
 }
 
@@ -229,7 +316,46 @@ int q6(int numerobase, int numerobusca)
 
  int q7(char matriz[8][10], char palavra[5])
  {
-     int achou;
+     int achou = 0,i,j = 0,aux = 0,posI=0,posJ=0;
+     for(i = 0;matriz[i][j] != '\0';i++){
+      for(j = 0;matriz[i][j] != '\0';j++){
+        if(matriz[i][j] == palavra[aux]){
+          if(i != 0 && matriz[i-1][j] == palavra[aux+1]){
+            posI = -1;
+          }
+
+          if(j != 0 && matriz[i][j-1] == palavra[aux+1]){
+            posJ = -1;
+          }
+
+          if(matriz[i+1][j] == palavra[aux+1]){
+            posI = +1;
+          }
+          
+          if(matriz[i][j+1] == palavra[aux+1]){
+            posJ = +1;
+          }
+
+          if(matriz[i+1][j-1] == palavra[aux+1]){
+            posI = +1;
+            posJ = -1;
+          }
+
+          if(matriz[i+1][j+1] == palavra[aux+1]){
+            posI = posJ = +1;
+          }
+
+          if(matriz[i-1][j-1] == palavra[aux+1]){
+            posI = posJ = -1;
+          }
+
+          if(matriz[i+1][j-1] == palavra[aux+1]){
+            posI = 1;
+            posJ = -1;
+          }
+        }
+      }
+     }
      return achou;
  }
 
