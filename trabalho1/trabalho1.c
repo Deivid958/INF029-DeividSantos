@@ -11,7 +11,7 @@
 
 //  ----- Dados do Aluno -----
 //  Nome: Deivid Santos de Souza
-//  email: 
+//  email: 20251160028@ifba.edu.br
 //  Matrícula: 20251160028
 //  Semestre: 2
 
@@ -160,7 +160,67 @@ int q1(char data[])
  */
 DiasMesesAnos q2(char datainicial[], char datafinal[])
 {
-    //calcule os dados e armazene nas três variáveis a seguir   
+
+    //calcule os dados e armazene nas três variáveis a seguir
+    DiasMesesAnos dma;
+    int passa,inicioDia,inicioMes,inicioAno,i,fimDia,fimMes,fimAno;
+    inicioDia = inicioMes = inicioAno = fimDia = fimMes = fimAno = 0;
+    if (q1(datainicial) == 0){
+      dma.retorno = 2;
+      return dma;
+    }else if (q1(datafinal) == 0){
+      dma.retorno = 3;
+      return dma;
+    }else{
+      //verifique se a data final não é menor que a data inicial
+      passa = 0;
+      for(i = 0;datainicial[i] != '\0';i++){
+        if(datainicial[i] == '/'){
+          passa++;
+        }
+        else if(passa == 0){
+          inicioDia = inicioDia * 10 + (datainicial[i] - '0');
+        }
+        else if(passa == 1){
+          inicioMes = inicioMes * 10 + (datainicial[i] - '0');
+        }
+        else{
+          inicioAno = inicioAno * 10 + (datainicial[i] - '0');
+        }
+      }
+      passa = 0;
+      for(i = 0;datafinal[i] != '\0';i++){
+        if(datafinal[i] == '/'){
+          passa++;
+        }
+        else if(passa == 0){
+          fimDia = fimDia * 10 + (datafinal[i] - '0');
+        }
+        else if(passa == 1){
+          fimMes = fimMes * 10 + (datafinal[i] - '0');
+        }
+        else{
+          fimAno = fimAno * 10 + (datafinal[i] - '0');
+        }
+      }
+      if(inicioAno > fimAno || inicioMes > fimMes || inicioDia > fimDia){
+        dma.retorno = 4;
+        return dma;
+      }
+      //calcule a distancia entre as datas
+      
+      dma.qtdAnos = fimAno - inicioAno;
+      dma.qtdMeses = fimMes - inicioMes;
+      if(inicioDia == fimDia)
+        dma.qtdDias = 0;
+      else
+        dma.qtdDias = fimDia - inicioDia;
+      //se tudo der certo
+      dma.retorno = 1;
+      return dma;
+
+    }
+    
 }
 
 /*
@@ -313,53 +373,98 @@ int q6(int numerobase, int numerobusca)
  @saida
     1 se achou 0 se não achou
  */
+int acha(char matriz[8][10],int i, int j,char palavra[6],int a,int b){
+  int k = 1;
+  while(matriz[i][j] != '\0' && i >= 0 && i >= 0){
+    if(a == 1)
+      i++;
+    else if(a == -1)
+      i--;
+    if(b == 1)
+      j++;
+    else if( b == -1)
+      j--;
 
- int q7(char matriz[8][10], char palavra[5])
- {
-     int achou = 0,i,j = 0,aux = 0,posI=0,posJ=0;
-     for(i = 0;matriz[i][j] != '\0';i++){
-      for(j = 0;matriz[i][j] != '\0';j++){
-        if(matriz[i][j] == palavra[aux]){
-          if(i != 0 && matriz[i-1][j] == palavra[aux+1]){
-            posI = -1;
-          }
+    if(matriz[i][j] != palavra[k] || k == 5){
+      break;
+    }
+    k++;
+  }
+  if(k == 5)
+    return 1;
+  else
+    return 0;
+}
+int q7(char matriz[8][10], char palavra[6])
+{
+  int a = 0;
+  int i,j;
+  for(i = 0;matriz[i][0] != '\0';i++){
+    for(j = 0;matriz[i][j] != '\0';j++){
+      if(matriz[i][j] == palavra[0]){
 
-          if(j != 0 && matriz[i][j-1] == palavra[aux+1]){
-            posJ = -1;
-          }
-
-          if(matriz[i+1][j] == palavra[aux+1]){
-            posI = +1;
-          }
-          
-          if(matriz[i][j+1] == palavra[aux+1]){
-            posJ = +1;
-          }
-
-          if(matriz[i+1][j-1] == palavra[aux+1]){
-            posI = +1;
-            posJ = -1;
-          }
-
-          if(matriz[i+1][j+1] == palavra[aux+1]){
-            posI = posJ = +1;
-          }
-
-          if(matriz[i-1][j-1] == palavra[aux+1]){
-            posI = posJ = -1;
-          }
-
-          if(matriz[i+1][j-1] == palavra[aux+1]){
-            posI = 1;
-            posJ = -1;
+        if(i > 0 && (i != 0 && matriz[i-1][j] == palavra[1])){
+          a = acha(matriz,i,j,palavra,-1,0);
+          if(a == 1){
+            return a;
           }
         }
+
+        if(j > 0 &&(j != 0 && matriz[i][j-1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,0,-1);
+          if(a == 1){
+            return a;
+          }
+        }
+
+        if(i < 8 &&(matriz[i+1][j] == palavra[1])){
+          a = acha(matriz,i,j,palavra,1,0);
+          if(a == 1){
+            return a;
+          }
+        }
+        
+        if(j < 10 &&(matriz[i][j+1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,0,1);
+          if(a == 1){
+            return a;
+          }
+        }
+
+        if(i < 8 && j > 0 &&(matriz[i+1][j-1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,1,-1);
+          if(a == 1){
+            return a;
+          }
+        }
+
+        if(i < 8 && j < 10 &&(matriz[i+1][j+1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,1,1);
+          if(a == 1){
+            return a;
+          }
+        }
+        
+
+        if(i > 0 && j > 0 &&(matriz[i-1][j-1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,-1,-1);
+          if(a == 1){
+            return a;
+          }
+        }
+
+        if(i > 0 && j < 10 &&(matriz[i-1][j+1] == palavra[1])){
+          a = acha(matriz,i,j,palavra,-1,1);
+          if(a == 1){
+            return a;
+          }
+        } 
       }
-     }
-     return achou;
- }
-
-
+    }
+    j = i;
+  }
+  return a;
+}
 
 DataQuebrada quebraData(char data[]){
   DataQuebrada dq;
