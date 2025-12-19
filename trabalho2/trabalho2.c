@@ -555,10 +555,6 @@ Objetivo: finaliza o programa. deve ser chamado ao final do programa
 para poder liberar todos os espaços de memória das estruturas auxiliares.
 
 */
-void dobrar(int *x){
-
-}
-
 void finalizar()
 {   
     for(int i = 0;i<TAM;i++){
